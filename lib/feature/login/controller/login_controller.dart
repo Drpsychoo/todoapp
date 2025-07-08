@@ -36,6 +36,7 @@ class LoginController extends GetxController {
         email: email,
         password: password,
       );
+      Get.offAll(() => Homepage());
       Get.snackbar("Success", "Account created successfully!");
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? "Registration failed";
