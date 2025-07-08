@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52790263940",
+    "project_id": "todos-6a5cb",
+    "storage_bucket": "todos-6a5cb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52790263940:android:a3c97c38b4c643a12002d1",
+        "android_client_info": {
+          "package_name": "com.example.texastodo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuaCJ4qNKgUqXxfyDFpNF_3PueK_e_AFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
