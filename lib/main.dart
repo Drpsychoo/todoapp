@@ -6,10 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:texastodo/feature/introduction/intro.dart';
 import 'package:texastodo/feature/login/controller/login_controller.dart';
 import 'package:texastodo/feature/login/login_screen.dart';
+import 'package:texastodo/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // ✅ Register controller
   Get.put(LoginController());

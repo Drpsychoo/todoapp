@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:texastodo/feature/home/home.dart';
+import 'package:texastodo/apiexample/screen/userscreen.dart';
 import 'package:texastodo/feature/login/login_screen.dart';
 
 class LoginController extends GetxController {
@@ -23,7 +23,7 @@ class LoginController extends GetxController {
     if (user == null) {
       Get.offAll(() => LoginScreen());
     } else {
-      Get.offAll(() => Homepage());
+      Get.offAll(() => UserListScreen());
     }
   }
 
@@ -36,7 +36,6 @@ class LoginController extends GetxController {
         email: email,
         password: password,
       );
-      Get.offAll(() => Homepage());
       Get.snackbar("Success", "Account created successfully!");
     } on FirebaseAuthException catch (e) {
       errorMessage.value = e.message ?? "Registration failed";

@@ -16,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   var passwordController = TextEditingController();
   var emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
   bool isPasswordVisible = false;
   @override
   Widget build(BuildContext context) {
