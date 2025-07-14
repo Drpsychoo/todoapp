@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:texastodo/apiexample/screen/userscreen.dart';
+import 'package:texastodo/api%20test/screen/apitest.dart';
 import 'package:texastodo/feature/login/login_screen.dart';
 
 class LoginController extends GetxController {
@@ -23,7 +23,7 @@ class LoginController extends GetxController {
     if (user == null) {
       Get.offAll(() => LoginScreen());
     } else {
-      Get.offAll(() => UserListScreen());
+      Get.offAll(() => Apitest());
     }
   }
 

@@ -1,0 +1,77 @@
+import 'package:get/get.dart';
+import 'package:texastodo/api%20test/model/test_model.dart';
+import 'package:texastodo/api%20test/repository/api_repository.dart';
+
+class TodoController extends GetxController {
+  final ApiRepository _apiRepository = ApiRepository();
+
+  var todos = <TodoModel>[].obs;
+  var isLoading = false.obs;
+  var error = ''.obs;
+
+  Future<void> fetchTodos() async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      final result = await _apiRepository.getTodos();
+      todos.assignAll(result);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<TodoModel?> getTodoById(String id) async {
+    try {
+      isLoading.value = true;
+      final todo = await _apiRepository.getTodoById(id);
+      return todo;
+    } catch (e) {
+      error.value = e.toString();
+      return null;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> createTodo(String title) async {
+    try {
+      isLoading.value = true;
+      final newTodo = await _apiRepository.createTodo(title);
+      todos.add(newTodo);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> updateTodo(String id, Map<String, dynamic> updateData) async {
+    try {
+      isLoading.value = true;
+      final updatedTodo = await _apiRepository.updateTodo(id, updateData);
+
+      final index = todos.indexWhere((todo) => todo.id == id);
+      if (index != -1) {
+        todos[index] = updatedTodo;
+      }
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteTodo(String id) async {
+    try {
+      isLoading.value = true;
+      await _apiRepository.deleteTodo(id);
+      todos.removeWhere((todo) => todo.id == id);
+    } catch (e) {
+      error.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
