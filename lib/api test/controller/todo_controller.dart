@@ -5,7 +5,7 @@ import 'package:texastodo/api%20test/repository/api_repository.dart';
 class TodoController extends GetxController {
   final ApiRepository _apiRepository = ApiRepository();
 
-  var todos = <TodoModel>[].obs;
+  var todos = <Todo>[].obs;
   var isLoading = false.obs;
   var error = ''.obs;
 
@@ -22,7 +22,7 @@ class TodoController extends GetxController {
     }
   }
 
-  Future<TodoModel?> getTodoById(String id) async {
+  Future<Todo?> getTodoById(String id) async {
     try {
       isLoading.value = true;
       final todo = await _apiRepository.getTodoById(id);
@@ -35,10 +35,10 @@ class TodoController extends GetxController {
     }
   }
 
-  Future<void> createTodo(String title) async {
+  Future<void> createTodo(Map<String, dynamic> data) async {
     try {
       isLoading.value = true;
-      final newTodo = await _apiRepository.createTodo(title);
+      final newTodo = await _apiRepository.createTodo(data);
       todos.add(newTodo);
     } catch (e) {
       error.value = e.toString();
@@ -63,7 +63,7 @@ class TodoController extends GetxController {
     }
   }
 
-  Future<void> deleteTodo(String id) async {
+  Future<void> deleteTodo(int id) async {
     try {
       isLoading.value = true;
       await _apiRepository.deleteTodo(id);

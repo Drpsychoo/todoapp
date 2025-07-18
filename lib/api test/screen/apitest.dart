@@ -11,6 +11,8 @@ class Apitest extends StatefulWidget {
 
 class _ApitestState extends State<Apitest> {
   final TodoController todoController = Get.put(TodoController());
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController userIdController = TextEditingController();
 
   @override
   void initState() {
@@ -19,8 +21,6 @@ class _ApitestState extends State<Apitest> {
   }
 
   void _showAddTodoDialog() {
-    final TextEditingController titleController = TextEditingController();
-
     Get.defaultDialog(
       title: 'Add Todo',
       content: Column(
@@ -32,16 +32,70 @@ class _ApitestState extends State<Apitest> {
               border: OutlineInputBorder(),
             ),
           ),
+          TextField(
+            controller: userIdController,
+            decoration: const InputDecoration(
+              labelText: 'user Id',
+              border: OutlineInputBorder(),
+            ),
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
               final title = titleController.text.trim();
+              final userId = userIdController.text.trim();
               if (title.isNotEmpty) {
-                await todoController.createTodo(title);
+                var data = {"todo": title, "userId": int.tryParse(userId)};
+                await todoController.createTodo(data);
                 Get.back(); // close dialog
               }
             },
             child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showUpdateTodoDialog(String title, String userid, String todoid) {
+    final TextEditingController updatetitleController = TextEditingController(
+      text: title,
+    );
+    final TextEditingController updateuserIdController = TextEditingController(
+      text: userid,
+    );
+
+    Get.defaultDialog(
+      title: 'Update Todo',
+      content: Column(
+        children: [
+          TextField(
+            controller: updatetitleController,
+            decoration: const InputDecoration(
+              labelText: 'Title',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          SizedBox(height: 10),
+          TextField(
+            controller: updateuserIdController,
+            decoration: const InputDecoration(
+              labelText: 'user Id',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () async {
+              final title = updatetitleController.text.trim();
+              final userId = updateuserIdController.text.trim();
+              if (title.isNotEmpty) {
+                var data = {"todo": title, "userId": int.tryParse(userId)};
+                await todoController.updateTodo(todoid, data);
+                Get.back(); // close dialog
+              }
+            },
+            child: const Text('Update'),
           ),
         ],
       ),
@@ -71,25 +125,43 @@ class _ApitestState extends State<Apitest> {
           itemCount: todoController.todos.length,
           separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
-            final todo = todoController.todos[index];
+            final data = todoController.todos[index];
             return ListTile(
-              title: Text(todo.title ?? 'No Title'),
-              subtitle: Text('ID: ${todo.id}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  Get.defaultDialog(
-                    title: 'Confirm Delete',
-                    middleText: 'Are you sure you want to delete this todo?',
-                    textConfirm: 'Yes',
-                    textCancel: 'No',
-                    confirmTextColor: Colors.white,
-                    onConfirm: () async {
-                      await todoController.deleteTodo(todo.id!);
-                      Get.back();
-                    },
-                  );
-                },
+              title: Text(data.todo ?? 'No Title'),
+              subtitle: Text('ID: ${data.id}'),
+              contentPadding: EdgeInsets.all(8),
+              trailing: IntrinsicWidth(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      onPressed:
+                          () => _showUpdateTodoDialog(
+                            data.todo.toString(),
+                            data.userId.toString(),
+                            data.id.toString(),
+                          ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        Get.defaultDialog(
+                          title: 'Confirm Delete',
+                          middleText:
+                              'Are you sure you want to delete this todo?',
+                          textConfirm: 'Yes',
+                          textCancel: 'No',
+                          confirmTextColor: Colors.white,
+                          onConfirm: () async {
+                            await todoController.deleteTodo(data.id!);
+                            Get.back();
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -103,49 +175,3 @@ class _ApitestState extends State<Apitest> {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:texastodo/api%20test/controller/todo_controller.dart';
-
-// class Apitest extends StatefulWidget {
-//   const Apitest({super.key});
-
-//   @override
-//   State<Apitest> createState() => _ApitestState();
-// }
-
-// class _ApitestState extends State<Apitest> {
-//   var todoController = Get.put(TodoController());
-//   @override
-//   void initState() {
-//     super.initState();
-//     todoController.fetchTodos();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Api Testing")),
-//       body: Obx(() {
-//         if (todoController.isLoading.value == true) {
-//           return Center(child: CircularProgressIndicator());
-//         }
-//         if (todoController.error.value != "") {
-//           return Text(todoController.error.value);
-//         }
-//         if (todoController.todos.isEmpty) {
-//           return Text("no data found");
-//         }
-//         return ListView.separated(
-//           itemCount: todoController.todos.length,
-//           separatorBuilder: (context, index) => SizedBox(height: 10),
-//           itemBuilder: (context, index) {
-//             var data = todoController.todos[index];
-//             return Text("${data.title}");
-//           },
-//         );
-//       }),
-//     );
-//   }
-// }

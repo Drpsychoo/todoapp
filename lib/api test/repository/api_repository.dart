@@ -2,17 +2,22 @@ import 'package:dio/dio.dart';
 import 'package:texastodo/api%20test/model/test_model.dart';
 
 class ApiRepository {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://10.160.9.8:3000/todos'));
+  final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://dummyjson.com',
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
 
-  Future<List<TodoModel>> getTodos() async {
+  Future<List<Todo>> getTodos() async {
     try {
       print('[GET] /get');
-      final response = await _dio.get('/get');
+      final response = await _dio.get('/todos');
       print('Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
-        final data = response.data as List<dynamic>;
-        return data.map((e) => TodoModel.fromJson(e)).toList();
+        final data = TodoModel.fromJson(response.data);
+        return data.todos ?? [];
       } else {
         throw Exception('Failed to load todos: ${response.statusCode}');
       }
@@ -22,14 +27,14 @@ class ApiRepository {
     }
   }
 
-  Future<TodoModel> getTodoById(String id) async {
+  Future<Todo> getTodoById(String id) async {
     try {
       print('[GET] /get/$id');
-      final response = await _dio.get('/get/$id');
+      final response = await _dio.get('/todos/$id');
       print('Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
-        return TodoModel.fromJson(response.data);
+        return Todo.fromJson(response.data);
       } else {
         throw Exception('Failed to load todo: ${response.statusCode}');
       }
@@ -39,14 +44,13 @@ class ApiRepository {
     }
   }
 
-  Future<TodoModel> createTodo(String title) async {
+  Future<Todo> createTodo(Map<String, dynamic> value) async {
     try {
-      print('[POST] /create with data: {"title": "$title"}');
-      final response = await _dio.post('/create', data: {'title': title});
+      final response = await _dio.post('/todos/add', data: value);
       print('Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 201) {
-        return TodoModel.fromJson(response.data);
+        return Todo.fromJson(response.data);
       } else {
         throw Exception('Failed to create todo: ${response.statusCode}');
       }
@@ -56,17 +60,14 @@ class ApiRepository {
     }
   }
 
-  Future<TodoModel> updateTodo(
-    String id,
-    Map<String, dynamic> updateData,
-  ) async {
+  Future<Todo> updateTodo(String id, Map<String, dynamic> updateData) async {
     try {
       print('[PUT] /update/$id with data: $updateData');
-      final response = await _dio.put('/update/$id', data: updateData);
+      final response = await _dio.put('/todos/$id', data: updateData);
       print('Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
-        return TodoModel.fromJson(response.data);
+        return Todo.fromJson(response.data);
       } else {
         throw Exception('Failed to update todo: ${response.statusCode}');
       }
@@ -76,10 +77,10 @@ class ApiRepository {
     }
   }
 
-  Future<void> deleteTodo(String id) async {
+  Future<void> deleteTodo(int id) async {
     try {
       print('[DELETE] /delete/$id');
-      final response = await _dio.delete('/delete/$id');
+      final response = await _dio.delete('/todos/$id');
       print('Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode != 200) {

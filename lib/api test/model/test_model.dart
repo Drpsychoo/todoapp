@@ -1,37 +1,52 @@
 class TodoModel {
-  TodoModel({
-    this.id,
-    this.title,
-    this.completed,
-    this.createdAt,
-    this.updatedAt,
-    this.v,
-  });
+  TodoModel({this.todos, this.total, this.skip, this.limit});
 
-  final String? id;
-  final String? title;
-  final bool? completed;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  final num? v;
+  final List<Todo>? todos;
+  final num? total;
+  final num? skip;
+  final num? limit;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) {
     return TodoModel(
-      id: json["_id"] ?? "",
-      title: json["title"] ?? "",
-      completed: json["completed"] ?? false,
-      createdAt: DateTime.tryParse(json["createdAt"] ?? ""),
-      updatedAt: DateTime.tryParse(json["updatedAt"] ?? ""),
-      v: json["__v"] ?? 0,
+      todos:
+          json["todos"] == null
+              ? []
+              : List<Todo>.from(json["todos"]!.map((x) => Todo.fromJson(x))),
+      total: json["total"] ?? 0,
+      skip: json["skip"] ?? 0,
+      limit: json["limit"] ?? 0,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "_id": id,
-    "title": title,
+    "todos": todos?.map((x) => x.toJson()).toList(),
+    "total": total,
+    "skip": skip,
+    "limit": limit,
+  };
+}
+
+class Todo {
+  Todo({this.id, this.todo, this.completed, this.userId});
+
+  final int? id;
+  final String? todo;
+  final bool? completed;
+  final num? userId;
+
+  factory Todo.fromJson(Map<String, dynamic> json) {
+    return Todo(
+      id: json["id"] ?? 0,
+      todo: json["todo"] ?? "",
+      completed: json["completed"] ?? false,
+      userId: json["userId"] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "todo": todo,
     "completed": completed,
-    "createdAt": createdAt?.toIso8601String(),
-    "updatedAt": updatedAt?.toIso8601String(),
-    "__v": v,
+    "userId": userId,
   };
 }
